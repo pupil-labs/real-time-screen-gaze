@@ -4,7 +4,6 @@ import uuid
 from typing import Dict, Iterable, List, Mapping, NamedTuple, Optional, Tuple
 
 import cv2
-import msgpack
 import numpy as np
 import numpy.typing as npt
 import pupil_apriltags
