@@ -9,30 +9,28 @@ This works by identifying the image of the display as it appears in the scene ca
 
    from pupil_labs.realtime_screen_gaze import marker_generator
    ...
+
    marker_pixels = marker_generator.generate_marker(marker_id=0)
 
 
 More markers will yield higher accuracy, and we recommend a minimum of four. Each marker must be unique, and the ``marker_id`` parameter is provided for this purpose.
 
-Once you've drawn the markers to the screen using your GUI toolkit of choice. Next, we'll need to establish a connection to your Companion Device.
+Once you've drawn the markers to the screen using your GUI toolkit of choice, you'll next need to setup a ``GazeMapper`` object. This requires some information about unique charactersics of your Neon module's scene camera. This information can be obtained from any recording downloaded from Pupil Cloud in a file called ``scene_camera.json``.
 
 .. code-block:: python
 
-   from pupil_labs.realtime_api.simple import discover_one_device
-   ...
-   device = discover_one_device(max_search_duration_seconds=10)
-
-Once we're connected we can query the device for its scene camera serial number, which we can then use to download the calibration details for this specific unit's camera, and with those details we can initialize our ``GazeMapper`` instance.
-
-.. code-block:: python
-
-   from pupil_labs.realtime_screen_gaze import cloud_api
+   import json
    from pupil_labs.realtime_screen_gaze.gaze_mapper import GazeMapper
    ...
-   camera = cloud_api.camera_for_scene_cam_serial(device.serial_number_scene_cam)
-   gaze_mapper = GazeMapper(camera)
 
-Now that we have a ``GazeMapper`` object, we'll use it to define our display's surface by telling the ``GazeMapper`` which AprilTag markers we're using and where they appear on the screen.
+   with open('scene_camera.json') as fh:
+         camera_info = json.load(fh)
+         self.gazeMapper = GazeMapper(camera_info)
+
+   gaze_mapper = GazeMapper(camera_info)
+
+
+Now that we have a ``GazeMapper`` object, we need to specify which AprilTag markers we're using and where they appear on the screen.
 
 .. code-block:: python
 
@@ -45,6 +43,7 @@ Now that we have a ``GazeMapper`` object, we'll use it to define our display's s
       ],
       ...
    }
+
    screen_size = (1920, 1080)
 
    screen_surface = gaze_mapper.add_surface(
@@ -57,6 +56,11 @@ Here, ``marker_verts`` is a dictionary whose keys are the IDs of the markers we'
 With that, setup is complete and we're ready to start mapping gaze to the screen! On each iteration of our main loop we'll grab a video frame from the scene camera and gaze data from the Realtime API. We pass those along to our ``GazeMapper`` instance for processing, and it returns our gaze positions mapped to screen coordinates.
 
 .. code-block:: python
+
+   from pupil_labs.realtime_api.simple import discover_one_device
+   ...
+
+   device = discover_one_device(max_search_duration_seconds=10)
 
    while True:
       frame, gaze = device.receive_matched_scene_video_frame_and_gaze()

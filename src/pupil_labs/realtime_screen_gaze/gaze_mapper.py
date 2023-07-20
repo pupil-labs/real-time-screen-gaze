@@ -27,16 +27,22 @@ from .camera_models import Radial_Dist_Camera
 class GazeMapper:
     def __init__(
         self,
-        camera: Optional["Radial_Dist_Camera"],
+        camera_info: Optional["Radial_Dist_Camera"],
         surfaces: Iterable[Surface] = (),
     ) -> None:
         self._camera: Optional[Radial_Dist_Camera]
         self._detector: Optional[ApriltagDetector]
         self._tracker = SurfaceTracker()
 
-        self.camera = camera
         self._surfaces: List[Surface] = list(surfaces)
         self._recent_result: Optional[MarkerMapperResult] = None
+
+        self.camera = Radial_Dist_Camera(
+            name='Scene',
+            resolution=(1, 1),
+            K=camera_info["camera_matrix"],
+            D=camera_info["distortion_coefficients"],
+        )
 
     def process_frame(self, frame, gaze):
         if not all((self._camera, self._detector)):
@@ -108,10 +114,7 @@ class GazeMapper:
     @camera.setter
     def camera(self, camera: Optional["Radial_Dist_Camera"]) -> None:
         self._camera = camera
-        if camera is None:
-            self._detector = None
-        else:
-            self._detector = ApriltagDetector(camera)
+        self._detector = ApriltagDetector(camera)
 
     @property
     def surfaces(self) -> Tuple[Surface]:
