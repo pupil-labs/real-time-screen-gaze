@@ -24,10 +24,8 @@ Once you've drawn the markers to the screen using your GUI toolkit of choice, yo
    ...
 
    with open('scene_camera.json') as fh:
-         camera_info = json.load(fh)
-         self.gazeMapper = GazeMapper(camera_info)
-
-   gaze_mapper = GazeMapper(camera_info)
+      camera_info = json.load(fh)
+      gaze_mapper = GazeMapper(camera_info)
 
 
 Now that we have a ``GazeMapper`` object, we need to specify which AprilTag markers we're using and where they appear on the screen.
