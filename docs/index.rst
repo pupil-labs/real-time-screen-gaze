@@ -7,7 +7,7 @@ Welcome to |project| documentation!
    history
 
 
-.. automodule:: realtime_screen_gaze
+.. automodule:: real_time_screen_gaze
     :members:
     :undoc-members:
     :show-inheritance:

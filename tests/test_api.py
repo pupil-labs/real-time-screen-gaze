@@ -1,4 +1,4 @@
-import pupil_labs.realtime_screen_gaze as this_project
+import pupil_labs.real_time_screen_gaze as this_project
 
 
 def test_package_metadata() -> None:

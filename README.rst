@@ -1,13 +1,13 @@
-===============================
-Pupil Labs Realtime Screen Gaze
-===============================
+=====================
+Real-time Screen Gaze
+=====================
 This package is designed to allow users of the Pupil Labs eyetracking hardware, especially `Neon <https://pupil-labs.com/products/neon/>`_, to acquire screen-based gaze coordinates in realtime without relying on `Pupil Core software <https://github.com/pupil-labs/pupil>`_.
 
 This works by identifying the image of the display as it appears in the scene camera. We accomplish this with `AprilTags <https://april.eecs.umich.edu/software/apriltag>`_, 2D barcodes similar to QR codes. This package provides a ``marker_generator`` module to create AprilTag image data.
 
 .. code-block:: python
 
-   from pupil_labs.realtime_screen_gaze import marker_generator
+   from pupil_labs.real_time_screen_gaze import marker_generator
    ...
 
    marker_pixels = marker_generator.generate_marker(marker_id=0)
@@ -20,7 +20,7 @@ Once you've drawn the markers to the screen using your GUI toolkit of choice, yo
 .. code-block:: python
 
    import json
-   from pupil_labs.realtime_screen_gaze.gaze_mapper import GazeMapper
+   from pupil_labs.real_time_screen_gaze.gaze_mapper import GazeMapper
    ...
 
    with open('scene_camera.json') as fh:
