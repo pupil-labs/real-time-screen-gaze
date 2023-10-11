@@ -27,7 +27,7 @@ from .camera_models import Radial_Dist_Camera
 class GazeMapper:
     def __init__(
         self,
-        camera_info: Optional["Radial_Dist_Camera"],
+        calibration,
         surfaces: Iterable[Surface] = (),
     ) -> None:
         self._camera: Optional[Radial_Dist_Camera]
@@ -40,8 +40,8 @@ class GazeMapper:
         self.camera = Radial_Dist_Camera(
             name='Scene',
             resolution=(1, 1),
-            K=camera_info["camera_matrix"],
-            D=camera_info["distortion_coefficients"],
+            K=calibration["scene_camera_matrix"][0],
+            D=calibration["scene_distortion_coefficients"][0],
         )
 
     def process_frame(self, frame, gaze):

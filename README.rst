@@ -15,17 +15,17 @@ This works by identifying the image of the display as it appears in the scene ca
 
 More markers will yield higher accuracy, and we recommend a minimum of four. Each marker must be unique, and the ``marker_id`` parameter is provided for this purpose.
 
-Once you've drawn the markers to the screen using your GUI toolkit of choice, you'll next need to setup a ``GazeMapper`` object. This requires some information about unique charactersics of your Neon module's scene camera. This information can be obtained from any recording downloaded from Pupil Cloud in a file called ``scene_camera.json``.
+Once you've drawn the markers to the screen using your GUI toolkit of choice, you'll next need to setup a ``GazeMapper`` object. This requires calibration data for the scene camera.
 
 .. code-block:: python
 
-   import json
+   from pupil_labs.realtime_api.simple import discover_one_device
    from pupil_labs.real_time_screen_gaze.gaze_mapper import GazeMapper
    ...
 
-   with open('scene_camera.json') as fh:
-      camera_info = json.load(fh)
-      gaze_mapper = GazeMapper(camera_info)
+   device = discover_one_device()
+   calibration = device.get_calibration()
+   gaze_mapper = GazeMapper(calibration)
 
 
 Now that we have a ``GazeMapper`` object, we need to specify which AprilTag markers we're using and where they appear on the screen.
