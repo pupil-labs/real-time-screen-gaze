@@ -83,6 +83,11 @@ class GazeMapper:
         self._surfaces = []
 
     def add_surface(self, markers_verts, surface_size, name='Screen'):
+        surface = self._generate_surface(markers_verts, surface_size, name)
+        self._surfaces.append(surface)
+        return surface
+
+    def _generate_surface(self, markers_verts, surface_size, name):
         surface = _Surface_V2(
             uid=SurfaceId(str(uuid.uuid4())),
             name=name,
@@ -106,9 +111,16 @@ class GazeMapper:
             )
             surface._add_marker(marker)
 
-        self._surfaces.append(surface)
-
         return surface
+
+    def replace_surface(self, surface, new_marker_verts, new_surface_size):
+        new_surface = self._generate_surface(new_marker_verts, new_surface_size, surface.name)
+        idx = self._surfaces.index(surface)
+        self._surfaces[idx] = new_surface
+
+        del surface
+
+        return new_surface
 
     @property
     def camera(self) -> Optional["Radial_Dist_Camera"]:
