@@ -61,7 +61,7 @@ class GazeMapper:
             for surface in self._surfaces
         }
 
-        gaze_undistorted = self._camera.undistort_points_on_image_plane([[gaze.x, gaze.y]])
+        gaze_undistorted = self._camera.undistort_points_on_image_plane([[gaze[0], gaze[1]]])
 
         gaze_mapped_norm: npt.NDArray[np.float32]
         mapped_gaze: Dict[SurfaceId, List[MarkerMappedGaze]] = {}
@@ -70,7 +70,7 @@ class GazeMapper:
                 mapped_gaze[surface_uid] = []
                 continue
 
-            gaze_mapped_norm = location._map_from_image_to_surface(gaze_undistorted)
+            gaze_mapped_norm = location._map_from_image_to_surface(gaze_undistorted.reshape(1, 2))
 
             mapped_gaze[location.surface_uid] = [
                 MarkerMappedGaze.from_norm_pos(surface_uid, norm, base)
