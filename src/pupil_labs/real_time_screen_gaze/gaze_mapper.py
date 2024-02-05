@@ -48,7 +48,10 @@ class GazeMapper:
         if not all((self._camera, self._detector)):
             return
 
-        markers = self._detector.detect_from_image(frame.bgr_pixels)
+        if hasattr(frame, 'bgr_pixels'):
+            frame = frame.bgr_pixels
+
+        markers = self._detector.detect_from_image(frame)
 
         surface_locations = {
             surface.uid: self._tracker.locate_surface(
