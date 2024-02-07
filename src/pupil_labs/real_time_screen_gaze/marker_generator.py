@@ -3,7 +3,10 @@ import cv2
 apriltag_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_APRILTAG_36h11)
 
 def generate_marker(marker_id, side_pixels=8, flip_x=False, flip_y=False):
-	image_data = apriltag_dict.generateImageMarker(marker_id, side_pixels, 0)
+	try:
+		image_data = apriltag_dict.generateImageMarker(marker_id, side_pixels, 0)
+	except:
+		image_data = apriltag_dict.drawMarker(marker_id, side_pixels)
 
 	flip_code = None
 	if flip_x and not flip_y:
