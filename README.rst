@@ -15,7 +15,7 @@ This works by identifying the image of the display as it appears in the scene ca
 
 More markers will yield higher accuracy, and we recommend a minimum of four. Each marker must be unique, and the ``marker_id`` parameter is provided for this purpose.
 
-Once you've drawn the markers to the screen using your GUI toolkit of choice, you'll next need to setup a ``GazeMapper`` object. This requires calibration data for the scene camera.
+Once you've drawn the markers to the screen using your GUI toolkit of choice, you'll next need to setup a ``GazeMapper`` object. This requires calibration data for the scene camera. For Neon, this is very simple:
 
 .. code-block:: python
 
@@ -27,6 +27,25 @@ Once you've drawn the markers to the screen using your GUI toolkit of choice, yo
    calibration = device.get_calibration()
    gaze_mapper = GazeMapper(calibration)
 
+For Pupil Invisible, you'll need to extract the `scene_camera.json` file the Time Series Data of a recording which has been been uploaded to Pupil Cloud. This method will also work with Neon recordings in a non-realtime context.
+
+.. code-block:: python
+
+   import json
+   from pupil_labs.real_time_screen_gaze.gaze_mapper import GazeMapper
+   ...
+
+   with open("scene_camera.json") as calibration_file:
+      calibration_data = json.load(calibration_file)
+      if "dist_coefs" in calibration_data:
+         calibration_data["distortion_coefficients"] = calibration_data["dist_coefs"]
+
+      calibration = {
+         "scene_camera_matrix": [calibration_data["camera_matrix"]],
+         "scene_distortion_coefficients": [calibration_data["distortion_coefficients"]],
+      }
+
+   gaze_mapper = GazeMapper(calibration)
 
 Now that we have a ``GazeMapper`` object, we need to specify which AprilTag markers we're using and where they appear on the screen.
 
