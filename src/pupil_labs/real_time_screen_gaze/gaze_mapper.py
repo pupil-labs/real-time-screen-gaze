@@ -36,6 +36,8 @@ class GazeMapper:
 
         self._surfaces: List[Surface] = list(surfaces)
         self._recent_result: Optional[MarkerMapperResult] = None
+        self._detected_markers = []
+        self._surface_locations = {}
 
         self.camera = Radial_Dist_Camera(
             name='Scene',
@@ -45,27 +47,35 @@ class GazeMapper:
         )
 
     def process_frame(self, frame, gaze):
-        if not all((self._camera, self._detector)):
+        self.process_scene(frame)
+        return self.process_gaze(gaze)
+
+    def process_scene(self, frame):
+        if not self._detector:
             return
 
         if hasattr(frame, 'bgr_pixels'):
             frame = frame.bgr_pixels
 
-        markers = self._detector.detect_from_image(frame)
+        self._detected_markers = self._detector.detect_from_image(frame)
 
-        surface_locations = {
+        self._surface_locations = {
             surface.uid: self._tracker.locate_surface(
                 surface=surface,
-                markers=markers,
+                markers=self._detected_markers,
             )
             for surface in self._surfaces
         }
+
+    def process_gaze(self, gaze):
+        if len(self._surface_locations) == 0:
+            return
 
         gaze_undistorted = self._camera.undistort_points_on_image_plane([[gaze[0], gaze[1]]])
 
         gaze_mapped_norm: npt.NDArray[np.float32]
         mapped_gaze: Dict[SurfaceId, List[MarkerMappedGaze]] = {}
-        for surface_uid, location in surface_locations.items():
+        for surface_uid, location in self._surface_locations.items():
             if location is None:
                 mapped_gaze[surface_uid] = []
                 continue
@@ -77,7 +87,7 @@ class GazeMapper:
                 for base, norm in zip(gaze, gaze_mapped_norm.tolist())
             ]
 
-        return MarkerMapperResult(markers, surface_locations, mapped_gaze)
+        return MarkerMapperResult(self._detected_markers, self._surface_locations, mapped_gaze)
 
     def clear_surfaces(self):
         self._surfaces = []
