@@ -42,8 +42,8 @@ class GazeMapper:
         self.camera = Radial_Dist_Camera(
             name='Scene',
             resolution=(1, 1),
-            K=calibration["scene_camera_matrix"],
-            D=calibration["scene_distortion_coefficients"],
+            K=calibration["scene_camera_matrix"].reshape((3, 3)),
+            D=calibration["scene_distortion_coefficients"].reshape((8,)),
         )
 
     def process_frame(self, frame, gaze):
