@@ -57,6 +57,9 @@ class GazeMapper:
         if hasattr(frame, 'bgr_pixels'):
             frame = frame.bgr_pixels
 
+        elif hasattr(frame, 'bgr_buffer'):
+            frame = frame.bgr_buffer()
+
         self._detected_markers = self._detector.detect_from_image(frame)
 
         self._surface_locations = {
